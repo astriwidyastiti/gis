@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/qgis2web.css" />
+    <link rel="stylesheet" href="css/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="css/filter.css" />
+    <link rel="stylesheet" href="css/nouislider.min.css" />
+    <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      html,
+      body,
+      #map {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin-top: 2rem;
+      }
+    </style>
+    <title>Informasi Tutupan Lahan Tahun 2005</title>
+  </head>
+  <body>
+    <!-- Navbar Starts -->
+    <nav class="navbar">
+      <a href="#" class="navbar-logo">Informasi Tutupan Lahan Tahun 2005</a>
+    </nav>
+    <!-- Navbar End -->
+    <div id="map"></div>
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+    <script src="js/tailDT.js"></script>
+    <script src="js/nouislider.min.js"></script>
+    <script src="js/wNumb.js"></script>
+    <script src="data/2005_1.js"></script>
+    <script>
+      var highlightLayer;
+      function highlightFeature(e) {
+        highlightLayer = e.target;
+
+        if (e.target.feature.geometry.type === "LineString") {
+          highlightLayer.setStyle({
+            color: "#ffff00",
+          });
+        } else {
+          highlightLayer.setStyle({
+            fillColor: "#ffff00",
+            fillOpacity: 1,
+          });
+        }
+        highlightLayer.openPopup();
+      }
+      var map = L.map("map", {
+        zoomControl: true,
+        maxZoom: 28,
+        minZoom: 1,
+      }).fitBounds([
+        [-5.549250929189159, 99.40578717819943],
+        [-2.1895493171968763, 105.34870831114964],
+      ]);
+      var hash = new L.Hash(map);
+      map.attributionControl.setPrefix(
+        '<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>'
+      );
+      var autolinker = new Autolinker({
+        truncate: { length: 30, location: "smart" },
+      });
+      var bounds_group = new L.featureGroup([]);
+      function setBounds() {}
+      map.createPane("pane_GoogleSatellite_0");
+      map.getPane("pane_GoogleSatellite_0").style.zIndex = 400;
+      var layer_GoogleSatellite_0 = L.tileLayer(
+        "http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}",
+        {
+          pane: "pane_GoogleSatellite_0",
+          opacity: 1.0,
+          attribution: "",
+          minZoom: 1,
+          maxZoom: 28,
+          minNativeZoom: 0,
+          maxNativeZoom: 18,
+        }
+      );
+      layer_GoogleSatellite_0;
+      map.addLayer(layer_GoogleSatellite_0);
+      function pop_2005_1(feature, layer) {
+        layer.on({
+          mouseout: function (e) {
+            for (i in e.target._eventParents) {
+              e.target._eventParents[i].resetStyle(e.target);
+            }
+            if (typeof layer.closePopup == "function") {
+              layer.closePopup();
+            } else {
+              layer.eachLayer(function (feature) {
+                feature.closePopup();
+              });
+            }
+          },
+          mouseover: highlightFeature,
+        });
+        var popupContent =
+          '<table>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["DN"] !== null
+            ? autolinker.link(feature.properties["DN"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["Kelas"] !== null
+            ? autolinker.link(feature.properties["Kelas"].toLocaleString())
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' +
+          (feature.properties["Luas"] !== null
+            ? autolinker.link(feature.properties["Luas"].toLocaleString())
+            : "") +
+          "</td>\
+                    </tr>\
+                </table>";
+        layer.bindPopup(popupContent, { maxHeight: 400 });
+      }
+
+      function style_2005_1_0(feature) {
+        switch (String(feature.properties["DN"])) {
+          case "0":
+            return {
+              pane: "pane_2005_1",
+              opacity: 1,
+              color: "rgba(35,35,35,1.0)",
+              dashArray: "",
+              lineCap: "butt",
+              lineJoin: "miter",
+              weight: 1.0,
+              fill: true,
+              fillOpacity: 1,
+              fillColor: "rgba(61,132,7,1.0)",
+              interactive: true,
+            };
+            break;
+          case "1":
+            return {
+              pane: "pane_2005_1",
+              opacity: 1,
+              color: "rgba(35,35,35,1.0)",
+              dashArray: "",
+              lineCap: "butt",
+              lineJoin: "miter",
+              weight: 1.0,
+              fill: true,
+              fillOpacity: 1,
+              fillColor: "rgba(218,132,3,1.0)",
+              interactive: true,
+            };
+            break;
+          case "2":
+            return {
+              pane: "pane_2005_1",
+              opacity: 1,
+              color: "rgba(35,35,35,1.0)",
+              dashArray: "",
+              lineCap: "butt",
+              lineJoin: "miter",
+              weight: 1.0,
+              fill: true,
+              fillOpacity: 1,
+              fillColor: "rgba(231,125,171,1.0)",
+              interactive: true,
+            };
+            break;
+          case "3":
+            return {
+              pane: "pane_2005_1",
+              opacity: 1,
+              color: "rgba(35,35,35,1.0)",
+              dashArray: "",
+              lineCap: "butt",
+              lineJoin: "miter",
+              weight: 1.0,
+              fill: true,
+              fillOpacity: 1,
+              fillColor: "rgba(107,255,1,1.0)",
+              interactive: true,
+            };
+            break;
+          case "4":
+            return {
+              pane: "pane_2005_1",
+              opacity: 1,
+              color: "rgba(35,35,35,1.0)",
+              dashArray: "",
+              lineCap: "butt",
+              lineJoin: "miter",
+              weight: 1.0,
+              fill: true,
+              fillOpacity: 1,
+              fillColor: "rgba(109,126,241,1.0)",
+              interactive: true,
+            };
+            break;
+          case "5":
+            return {
+              pane: "pane_2005_1",
+              opacity: 1,
+              color: "rgba(35,35,35,1.0)",
+              dashArray: "",
+              lineCap: "butt",
+              lineJoin: "miter",
+              weight: 1.0,
+              fill: true,
+              fillOpacity: 1,
+              fillColor: "rgba(255,73,1,1.0)",
+              interactive: true,
+            };
+            break;
+        }
+      }
+      map.createPane("pane_2005_1");
+      map.getPane("pane_2005_1").style.zIndex = 401;
+      map.getPane("pane_2005_1").style["mix-blend-mode"] = "normal";
+      var layer_2005_1 = new L.geoJson(json_2005_1, {
+        attribution: "",
+        interactive: true,
+        dataVar: "json_2005_1",
+        layerName: "layer_2005_1",
+        pane: "pane_2005_1",
+        onEachFeature: pop_2005_1,
+        style: style_2005_1_0,
+      });
+      bounds_group.addLayer(layer_2005_1);
+      map.addLayer(layer_2005_1);
+      var osmGeocoder = new L.Control.Geocoder({
+        collapsed: true,
+        position: "topleft",
+        text: "Search",
+        title: "Testing",
+      }).addTo(map);
+      document.getElementsByClassName(
+        "leaflet-control-geocoder-icon"
+      )[0].className += " fa fa-search";
+      document.getElementsByClassName(
+        "leaflet-control-geocoder-icon"
+      )[0].title += "Search for a place";
+      var baseMaps = {};
+      L.control
+        .layers(
+          baseMaps,
+          {
+            '2005<br /><table><tr><td style="text-align: center;"><img src="legend/2005_1_Hutan0.png" /></td><td>Hutan</td></tr><tr><td style="text-align: center;"><img src="legend/2005_1_LahanKosong1.png" /></td><td>Lahan Kosong</td></tr><tr><td style="text-align: center;"><img src="legend/2005_1_LahanTerbangun2.png" /></td><td>Lahan Terbangun</td></tr><tr><td style="text-align: center;"><img src="legend/2005_1_Perkebunan3.png" /></td><td>Perkebunan</td></tr><tr><td style="text-align: center;"><img src="legend/2005_1_Sawah4.png" /></td><td>Sawah</td></tr><tr><td style="text-align: center;"><img src="legend/2005_1_Sawit5.png" /></td><td>Sawit</td></tr></table>':
+              layer_2005_1,
+            "Google Satellite": layer_GoogleSatellite_0,
+          },
+          { collapsed: false }
+        )
+        .addTo(map);
+      setBounds();
+      var mapDiv = document.getElementById("map");
+      var row = document.createElement("div");
+      row.className = "row";
+      row.id = "all";
+      row.style.height = "100%";
+      var col1 = document.createElement("div");
+      col1.className = "col9";
+      col1.id = "mapWindow";
+      col1.style.height = "99%";
+      col1.style.width = "80%";
+      col1.style.display = "inline-block";
+      var col2 = document.createElement("div");
+      col2.className = "col3";
+      col2.id = "menu";
+      col2.style.display = "inline-block";
+      mapDiv.parentNode.insertBefore(row, mapDiv);
+      document.getElementById("all").appendChild(col1);
+      document.getElementById("all").appendChild(col2);
+      col1.appendChild(mapDiv);
+      var Filters = { Kelas: "str" };
+      function filterFunc() {
+        map.eachLayer(function (lyr) {
+          if ("options" in lyr && "dataVar" in lyr["options"]) {
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try {
+              for (key in Filters) {
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "");
+                if (Filters[key] == "str" || Filters[key] == "bool") {
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options;
+                  for (var i = 0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                  try {
+                    if (key in features[0].properties) {
+                      for (i = features.length - 1; i >= 0; --i) {
+                        if (
+                          selection.indexOf(features[i].properties[key]) < 0 &&
+                          selection.length > 0
+                        ) {
+                          features.splice(i, 1);
+                        }
+                      }
+                    }
+                  } catch (err) {}
+                }
+                if (Filters[key] == "int") {
+                  sliderVals = document
+                    .getElementById("div_" + keyS)
+                    .noUiSlider.get();
+                  try {
+                    if (key in features[0].properties) {
+                      for (i = features.length - 1; i >= 0; --i) {
+                        if (
+                          parseInt(features[i].properties[key]) <
+                            sliderVals[0] ||
+                          parseInt(features[i].properties[key]) > sliderVals[1]
+                        ) {
+                          features.splice(i, 1);
+                        }
+                      }
+                    }
+                  } catch (err) {}
+                }
+                if (Filters[key] == "real") {
+                  sliderVals = document
+                    .getElementById("div_" + keyS)
+                    .noUiSlider.get();
+                  try {
+                    if (key in features[0].properties) {
+                      for (i = features.length - 1; i >= 0; --i) {
+                        if (
+                          features[i].properties[key] < sliderVals[0] ||
+                          features[i].properties[key] > sliderVals[1]
+                        ) {
+                          features.splice(i, 1);
+                        }
+                      }
+                    }
+                  } catch (err) {}
+                }
+                if (
+                  Filters[key] == "date" ||
+                  Filters[key] == "datetime" ||
+                  Filters[key] == "time"
+                ) {
+                  try {
+                    if (key in features[0].properties) {
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, "");
+                      startdate = document
+                        .getElementById("dat_" + HTMLkey + "_date1")
+                        .value.replace(" ", "T");
+                      enddate = document
+                        .getElementById("dat_" + HTMLkey + "_date2")
+                        .value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i) {
+                        if (
+                          features[i].properties[key] < startdate ||
+                          features[i].properties[key] > enddate
+                        ) {
+                          features.splice(i, 1);
+                        }
+                      }
+                    }
+                  } catch (err) {}
+                }
+              }
+            } catch (err) {}
+            this[lyr["options"]["layerName"]].clearLayers();
+            this[lyr["options"]["layerName"]].addData(features);
+          }
+        });
+      }
+      document
+        .getElementById("menu")
+        .appendChild(document.createElement("div"));
+      var div_Kelas = document.createElement("div");
+      div_Kelas.id = "div_Kelas";
+      div_Kelas.className = "filterselect";
+      document.getElementById("menu").appendChild(div_Kelas);
+      sel_Kelas = document.createElement("select");
+      sel_Kelas.multiple = true;
+      sel_Kelas.size = 6;
+      sel_Kelas.id = "sel_Kelas";
+      var Kelas_options_str = "<option value='' unselected></option>";
+      sel_Kelas.onchange = function () {
+        filterFunc();
+      };
+      Kelas_options_str += '<option value="Hutan">Hutan</option>';
+      Kelas_options_str += '<option value="Lahan Kosong">Lahan Kosong</option>';
+      Kelas_options_str +=
+        '<option value="Lahan Terbangun">Lahan Terbangun</option>';
+      Kelas_options_str += '<option value="Perkebunan">Perkebunan</option>';
+      Kelas_options_str += '<option value="Sawah">Sawah</option>';
+      Kelas_options_str += '<option value="Sawit">Sawit</option>';
+      sel_Kelas.innerHTML = Kelas_options_str;
+      div_Kelas.appendChild(sel_Kelas);
+      var lab_Kelas = document.createElement("div");
+      lab_Kelas.innerHTML = "Kelas";
+      lab_Kelas.className = "filterlabel";
+      div_Kelas.appendChild(lab_Kelas);
+      var reset_Kelas = document.createElement("div");
+      reset_Kelas.innerHTML = "clear filter";
+      reset_Kelas.className = "filterlabel";
+      reset_Kelas.onclick = function () {
+        var options = document.getElementById("sel_Kelas").options;
+        for (var i = 0; i < options.length; i++) {
+          options[i].selected = false;
+        }
+        filterFunc();
+      };
+      div_Kelas.appendChild(reset_Kelas);
+    </script>
+  </body>
+</html>
